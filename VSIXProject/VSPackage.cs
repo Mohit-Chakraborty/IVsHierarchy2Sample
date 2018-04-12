@@ -77,23 +77,45 @@ namespace VSIXProject
 
             while (enumHierarchies.Next(1, hierarchies, out hierarchiesRetrieved) == 0)
             {
-                object name = null;
-                object projectDir = null;
-
                 if (hierarchies[0] is IVsHierarchy2)
                 {
                     var properties = new int[] { (int)__VSHPROPID.VSHPROPID_Name, (int)__VSHPROPID.VSHPROPID_ProjectDir };
-                    var values = new object[2];
+                    var values = new object[properties.Length];
+                    var results = new int[properties.Length];
 
                     try
                     {
-                        ((IVsHierarchy2)hierarchies[0]).GetProperties((uint)VSConstants.VSITEMID.Root, 2, properties, values);
+                        ((IVsHierarchy2)hierarchies[0]).GetProperties((uint)VSConstants.VSITEMID.Root, 2, properties, values, results);
 
-                        string s1 = values[0] as string;
-                        string s2 = values[1] as string;
+                        if (ErrorHandler.Succeeded(results[0]))
+                        {
+                            string name = values[0] as string;
+                            await this.WriteToOutputWindowAsync("\tProject name: " + name + Environment.NewLine);
+                        }
 
-                        await this.WriteToOutputWindowAsync("\tProject name: " + name + Environment.NewLine);
-                        await this.WriteToOutputWindowAsync("\tProject dir : " + projectDir + Environment.NewLine);
+                        if (ErrorHandler.Succeeded(results[1]))
+                        {
+                            string projectDir = values[1] as string;
+                            await this.WriteToOutputWindowAsync("\tProject dir : " + projectDir + Environment.NewLine);
+                        }
+
+                        var guidProperties = new int[] { (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, (int)__VSHPROPID.VSHPROPID_TypeGuid };
+                        var guidValues = new Guid[properties.Length];
+
+                        ((IVsHierarchy2)hierarchies[0]).GetGuidProperties((uint)VSConstants.VSITEMID.Root, 2, guidProperties, guidValues, results);
+
+                        if (ErrorHandler.Succeeded(results[0]))
+                        {
+                            var projectId = (Guid)guidValues[0];
+                            await this.WriteToOutputWindowAsync("\tProject id  : " + projectId + Environment.NewLine);
+                        }
+
+                        if (ErrorHandler.Succeeded(results[1]))
+                        {
+                            var projectType = (Guid)guidValues[1];
+                            await this.WriteToOutputWindowAsync("\tProject type: " + projectType + Environment.NewLine);
+                        }
+
                         await this.WriteToOutputWindowAsync(Environment.NewLine);
                     }
                     catch (Exception e)
@@ -127,6 +149,19 @@ namespace VSIXProject
                 pane?.Activate();
                 pane?.OutputString(output);
             }
+        }
+    }
+
+    internal class IVsHierarchy2Impl : IVsHierarchy2
+    {
+        void IVsHierarchy2.GetGuidProperties(uint itemid, int count, int[] propids, Guid[] rgGuids, int[] results)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IVsHierarchy2.GetProperties(uint itemid, int count, int[] propids, object[] vars, int[] results)
+        {
+            throw new NotImplementedException();
         }
     }
 }
