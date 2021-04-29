@@ -1,0 +1,41 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Microsoft.VisualStudio.Validation
+    versions:
+    - 16.8.33
+    - 16.9.28
+  - dependency-name: Microsoft.VisualStudio.CoreUtility
+    versions:
+    - 16.8.239
+    - 16.9.227
+  - dependency-name: Microsoft.VisualStudio.Shell.Interop.9.0
+    versions:
+    - 16.8.30705.32
+  - dependency-name: Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime
+    versions:
+    - 16.8.30705.32
+  - dependency-name: Microsoft.VisualStudio.Shell.Interop.10.0
+    versions:
+    - 16.8.30705.32
+  - dependency-name: Microsoft.VisualStudio.Shell.15.0
+    versions:
+    - 16.8.30709.132
+  - dependency-name: Microsoft.VisualStudio.Shell.Framework
+    versions:
+    - 16.8.30709.132
+  - dependency-name: Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime
+    versions:
+    - 16.8.30705.32
+  - dependency-name: Microsoft.VisualStudio.TextManager.Interop
+    versions:
+    - 16.8.30705.32
+  - dependency-name: Microsoft.VisualStudio.Shell.Interop.8.0
+    versions:
+    - 16.8.30705.32
